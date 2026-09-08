@@ -9,12 +9,28 @@
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/10926/badge)](https://www.bestpractices.dev/projects/10926)
 
 
-> **Note:** To file an issue for any Flatcar repository, please use the [central Flatcar issue tracker](https://github.com/flatcar/Flatcar/issues).
+
 </div>
 
 
 
-# \<project-name>
+# Butane-Init: a Cloud-Init to Butane Config Transpiler
+
+### Background
+
+Flatcar uses Butane and Ignition for provisioning. Much of the wider ecosystem still produces cloud-config (cloud-init) YAML, which makes it harder to adopt Flatcar in environments where cloud-config is already the norm.
+
+### The Project
+
+A transpiler in Go that converts cloud-config YAML into Butane YAML.
+The transpiler implements the minimum functionality needed to support ClusterAPI worker node provisioning, and to replace [coreos-cloudinit](https://github.com/flatcar/coreos-cloudinit)
+In practice that limits the transpiler to basic Butane features such as users, groups, certificates, files and systemd units.
+
+#### Goals and Non-Goals
+- A working Go transpiler covering a documented subset of cloud-config.
+- Test coverage for each supported feature, running in CI.
+- End to end integration with Flatcar and ClusterAPI.
+- Documentation covering supported fields and known limitations.
 
 ### A Flatcar Container Linux project
 
