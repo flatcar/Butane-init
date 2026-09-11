@@ -32,6 +32,33 @@ In practice that limits the transpiler to basic Butane features such as users, g
 - End to end integration with Flatcar and ClusterAPI.
 - Documentation covering supported fields and known limitations.
 
+### Usage
+
+Build `bt`, then pass a cloud-config file or pipe one on standard input:
+
+```sh
+go build -o bt ./cmd/bt
+bt cloud-config.yaml > butane.yaml
+# or: cat cloud-config.yaml | bt -o butane.yaml
+```
+
+`bt` currently converts only the Cluster API worker `users` subset. A config
+is either converted completely or rejected; unsupported fields are never
+silently discarded.
+
+| cloud-config field      | Butane field          |
+| ----------------------- | --------------------- |
+| `name`                  | `name`                |
+| `passwd`                | `password_hash`       |
+| `gecos`                 | `gecos`               |
+| `homedir`               | `home_dir`            |
+| `shell`                 | `shell`               |
+| `ssh_authorized_keys`   | `ssh_authorized_keys` |
+
+Password hashes remain locked, matching cloud-init's default
+`lock_passwd: true`. Supplementary and primary groups, sudo configuration,
+password unlocking, and every non-`users` stanza are not yet supported.
+
 ### A Flatcar Container Linux project
 
 Flatcar Container Linux is a fully open source, minimal-footprint, secure by default and always up-to-date Linux distribution for running containers at scale.
