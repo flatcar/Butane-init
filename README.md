@@ -37,7 +37,7 @@ In practice that limits the transpiler to basic Butane features such as users, g
 Build `bt`, then pass a cloud-config file or pipe one on standard input:
 
 ```sh
-go build -o bt ./cmd/bt
+go build -o bt .
 bt cloud-config.yaml > butane.yaml
 # or: cat cloud-config.yaml | bt -o butane.yaml
 ```
