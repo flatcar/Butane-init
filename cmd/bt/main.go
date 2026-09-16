@@ -87,7 +87,7 @@ func writeAtomically(path string, contents []byte) error {
 	tempPath := temp.Name()
 	defer os.Remove(tempPath)
 
-	if err := temp.Chmod(0o644); err != nil {
+	if err := temp.Chmod(0o600); err != nil {
 		temp.Close()
 		return fmt.Errorf("set output permissions: %w", err)
 	}
