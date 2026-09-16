@@ -8,8 +8,7 @@ import (
 )
 
 func TestTranspileClusterAPIWorkerUser(t *testing.T) {
-	input := `## template: jinja
-#cloud-config
+	input := `#cloud-config
 users:
   - name: alice
     passwd: "$6$hash"
@@ -54,6 +53,10 @@ func TestTranspileRejectsInvalidOrUnsupportedInput(t *testing.T) {
 		"arbitrary comment before header": {
 			input:   "# generated config\n#cloud-config\nusers: []\n",
 			wantErr: "missing #cloud-config header",
+		},
+		"jinja template": {
+			input:   "## template: jinja\n#cloud-config\nusers:\n  - name: alice\n    gecos: \"{{ ds.meta_data.name }}\"\n",
+			wantErr: "Jinja templates are unsupported",
 		},
 		"unsupported top-level field": {
 			input:   "#cloud-config\nruncmd: []\n",

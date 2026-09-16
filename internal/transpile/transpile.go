@@ -47,8 +47,8 @@ func (e validationErrors) Error() string {
 
 // Transpile converts one cloud-config document into a Flatcar Butane config.
 func Transpile(input []byte) ([]byte, error) {
-	if !hasCloudConfigHeader(input) {
-		return nil, fmt.Errorf("missing #cloud-config header")
+	if err := validateCloudConfigHeader(input); err != nil {
+		return nil, err
 	}
 
 	file, err := parser.ParseBytes(input, 0)
@@ -88,17 +88,20 @@ func Transpile(input []byte) ([]byte, error) {
 	return out, nil
 }
 
-func hasCloudConfigHeader(input []byte) bool {
+func validateCloudConfigHeader(input []byte) error {
 	for _, line := range strings.Split(string(input), "\n") {
 		line = strings.TrimSpace(line)
-		if line == "#cloud-config" {
-			return true
+		if line == "## template: jinja" {
+			return fmt.Errorf("Jinja templates are unsupported; render the template before transpiling")
 		}
-		if line != "" && line != "## template: jinja" {
-			return false
+		if line == "#cloud-config" {
+			return nil
+		}
+		if line != "" {
+			return fmt.Errorf("missing #cloud-config header")
 		}
 	}
-	return false
+	return fmt.Errorf("missing #cloud-config header")
 }
 
 func rejectYAMLReferences(input []byte) error {

@@ -58,6 +58,8 @@ silently discarded.
 Password hashes remain locked, matching cloud-init's default
 `lock_passwd: true`. Supplementary and primary groups, sudo configuration,
 password unlocking, and every non-`users` stanza are not yet supported.
+Jinja templates are not evaluated and are rejected; render them before passing
+the resulting cloud-config to `bt`.
 
 ### A Flatcar Container Linux project
 
