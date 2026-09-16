@@ -1,0 +1,6 @@
+#cloud-config
+# Cluster API renders additional groups as one comma-separated scalar.
+users:
+  - name: foo
+    groups: "foo, bar"
+    primary_group: foo

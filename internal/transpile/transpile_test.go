@@ -1,6 +1,7 @@
 package transpile_test
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -8,28 +9,19 @@ import (
 )
 
 func TestTranspileClusterAPIWorkerUser(t *testing.T) {
-	input := `#cloud-config
-users:
-  - name: alice
-    passwd: "$6$hash"
-    gecos: Alice Example
-    homedir: /srv/alice
-    shell: /bin/bash
-    ssh_authorized_keys:
-      - ssh-ed25519 AAAAC3Nza alice@example
-`
+	input := readFixture(t, "cluster-api-supported-user.yaml")
 
 	want := `variant: flatcar
 version: 1.0.0
 passwd:
   users:
-    - name: alice
-      password_hash: "!$6$hash"
+    - name: foo
+      password_hash: "!$6$REDACTED_TEST_HASH"
       ssh_authorized_keys:
-        - ssh-ed25519 AAAAC3Nza alice@example
-      gecos: Alice Example
-      home_dir: /srv/alice
-      shell: /bin/bash
+        - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIREDACTED fixture@example
+      gecos: Foo B. Bar
+      home_dir: /home/foo
+      shell: /bin/false
 `
 
 	got, err := transpile.Transpile([]byte(input))
@@ -62,9 +54,13 @@ func TestTranspileRejectsInvalidOrUnsupportedInput(t *testing.T) {
 			input:   "#cloud-config\nruncmd: []\n",
 			wantErr: "runcmd",
 		},
-		"deferred user field": {
-			input:   "#cloud-config\nusers:\n  - name: alice\n    groups: wheel\n",
+		"Cluster API groups fixture": {
+			input:   readFixture(t, "cluster-api-groups.yaml"),
 			wantErr: "groups",
+		},
+		"Cluster API deferred fields fixture": {
+			input:   readFixture(t, "cluster-api-deferred-fields.yaml"),
+			wantErr: "inactive",
 		},
 		"empty optional field": {
 			input:   "#cloud-config\nusers:\n  - name: alice\n    shell: \"\"\n",
@@ -102,4 +98,13 @@ func TestTranspileRejectsInvalidOrUnsupportedInput(t *testing.T) {
 			}
 		})
 	}
+}
+
+func readFixture(t *testing.T, name string) string {
+	t.Helper()
+	contents, err := os.ReadFile("testdata/" + name)
+	if err != nil {
+		t.Fatalf("read fixture %q: %v", name, err)
+	}
+	return string(contents)
 }

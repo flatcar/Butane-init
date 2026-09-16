@@ -1,0 +1,10 @@
+#cloud-config
+# Adapted from the Cluster API v1.11.1 populated-user test.
+users:
+  - name: foo
+    passwd: "$6$REDACTED_TEST_HASH"
+    gecos: Foo B. Bar
+    homedir: /home/foo
+    shell: /bin/false
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIREDACTED fixture@example
