@@ -6,8 +6,8 @@ import (
 	"sort"
 	"strings"
 
-	butane "github.com/coreos/butane/config"
-	butanecommon "github.com/coreos/butane/config/common"
+	butane "github.com/coreos/ignition/v2/butane/config"
+	butanecommon "github.com/coreos/ignition/v2/butane/config/common"
 	"github.com/goccy/go-yaml"
 	"github.com/goccy/go-yaml/ast"
 	"github.com/goccy/go-yaml/lexer"
