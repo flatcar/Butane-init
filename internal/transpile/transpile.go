@@ -30,10 +30,27 @@ type outputPasswd struct {
 	Users []outputUser `yaml:"users"`
 }
 
-type validationErrors []string
+// ValidationProblem describes one invalid or unsupported cloud-config value.
+type ValidationProblem struct {
+	Path    string
+	Message string
+	Line    int
+	Column  int
+}
 
-func (e validationErrors) Error() string {
-	return strings.Join(e, "\n")
+// ValidationErrors contains all problems found while validating a cloud-config.
+type ValidationErrors []ValidationProblem
+
+func (e ValidationErrors) Error() string {
+	messages := make([]string, len(e))
+	for i, problem := range e {
+		if problem.Line > 0 {
+			messages[i] = fmt.Sprintf("[%d:%d] %s: %s", problem.Line, problem.Column, problem.Path, problem.Message)
+		} else {
+			messages[i] = fmt.Sprintf("%s: %s", problem.Path, problem.Message)
+		}
+	}
+	return strings.Join(messages, "\n")
 }
 
 // Transpile converts one cloud-config document into a Flatcar Butane config.
@@ -60,7 +77,7 @@ func Transpile(input []byte) ([]byte, error) {
 		return nil, fmt.Errorf("decode cloud-config: %s", yaml.FormatError(err, false, true))
 	}
 
-	var problems validationErrors
+	var problems ValidationErrors
 	for _, key := range sortedKeys(document) {
 		if key != "users" {
 			problems = append(problems, problem(file, key, "unsupported field"))
@@ -121,14 +138,17 @@ func sortedKeys(values map[string]any) []string {
 	return keys
 }
 
-func problem(file *ast.File, path, message string) string {
+func problem(file *ast.File, path, message string) ValidationProblem {
+	problem := ValidationProblem{Path: path, Message: message}
 	locationPath := path
 	for locationPath != "" {
 		yamlPath, err := yaml.PathString("$." + locationPath)
 		if err == nil {
 			if node, err := yamlPath.FilterFile(file); err == nil && node.GetToken() != nil {
 				pos := node.GetToken().Position
-				return fmt.Sprintf("[%d:%d] %s: %s", pos.Line, pos.Column, path, message)
+				problem.Line = pos.Line
+				problem.Column = pos.Column
+				return problem
 			}
 		}
 		separator := strings.LastIndex(locationPath, ".")
@@ -137,5 +157,5 @@ func problem(file *ast.File, path, message string) string {
 		}
 		locationPath = locationPath[:separator]
 	}
-	return fmt.Sprintf("%s: %s", path, message)
+	return problem
 }

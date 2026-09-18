@@ -16,8 +16,8 @@ type outputUser struct {
 	Shell             *string  `yaml:"shell,omitempty"`
 }
 
-func parseUsers(document map[string]any, file *ast.File) ([]outputUser, validationErrors) {
-	var problems validationErrors
+func parseUsers(document map[string]any, file *ast.File) ([]outputUser, ValidationErrors) {
+	var problems ValidationErrors
 	rawUsers, exists := document["users"]
 	if !exists {
 		return nil, problems
@@ -52,12 +52,12 @@ func parseUsers(document map[string]any, file *ast.File) ([]outputUser, validati
 	return users, problems
 }
 
-func parseUser(fields map[string]any, path string, file *ast.File) (outputUser, validationErrors) {
+func parseUser(fields map[string]any, path string, file *ast.File) (outputUser, ValidationErrors) {
 	allowed := map[string]bool{
 		"name": true, "passwd": true, "gecos": true, "homedir": true,
 		"shell": true, "ssh_authorized_keys": true,
 	}
-	var problems validationErrors
+	var problems ValidationErrors
 	for _, key := range sortedKeys(fields) {
 		if !allowed[key] {
 			problems = append(problems, problem(file, path+"."+key, "unsupported field"))
@@ -77,7 +77,7 @@ func parseUser(fields map[string]any, path string, file *ast.File) (outputUser, 
 	return user, problems
 }
 
-func requiredString(fields map[string]any, key, path string, file *ast.File, problems *validationErrors) string {
+func requiredString(fields map[string]any, key, path string, file *ast.File, problems *ValidationErrors) string {
 	value := optionalString(fields, key, path, file, problems)
 	if value == nil {
 		if _, exists := fields[key]; !exists {
@@ -88,7 +88,7 @@ func requiredString(fields map[string]any, key, path string, file *ast.File, pro
 	return *value
 }
 
-func optionalString(fields map[string]any, key, path string, file *ast.File, problems *validationErrors) *string {
+func optionalString(fields map[string]any, key, path string, file *ast.File, problems *ValidationErrors) *string {
 	raw, exists := fields[key]
 	if !exists {
 		return nil
@@ -105,7 +105,7 @@ func optionalString(fields map[string]any, key, path string, file *ast.File, pro
 	return &value
 }
 
-func sshKeys(fields map[string]any, path string, file *ast.File, problems *validationErrors) []string {
+func sshKeys(fields map[string]any, path string, file *ast.File, problems *ValidationErrors) []string {
 	raw, exists := fields["ssh_authorized_keys"]
 	if !exists {
 		return nil
