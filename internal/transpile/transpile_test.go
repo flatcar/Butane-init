@@ -91,7 +91,7 @@ func TestTranspileReturnsStructuredValidationErrors(t *testing.T) {
 
 func readFixture(t *testing.T, name string) string {
 	t.Helper()
-	contents, err := os.ReadFile("testdata/" + name)
+	contents, err := os.ReadFile("testcases/" + name)
 	if err != nil {
 		t.Fatalf("read fixture %q: %v", name, err)
 	}
