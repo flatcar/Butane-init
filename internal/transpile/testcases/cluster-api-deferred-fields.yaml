@@ -1,0 +1,7 @@
+#cloud-config
+# Cluster API renders these account-policy fields as scalar values.
+users:
+  - name: fixture-user
+    inactive: true
+    lock_passwd: false
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
