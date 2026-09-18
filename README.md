@@ -32,6 +32,24 @@ In practice that limits the transpiler to basic Butane features such as users, g
 - End to end integration with Flatcar and ClusterAPI.
 - Documentation covering supported fields and known limitations.
 
+#### Cloud-Config Stanza Support
+
+The transpiler currently supports a subset of cloud-config. The table below tracks which stanzas are supported, partially supported, or unsupported.
+
+| Stanza | Status | Butane Implementation |
+|--------|--------|-----------------------|
+| `write_files` | Unsupported | `storage.files` |
+| `runcmd` | Unsupported | Generated scripts and systemd oneshot units |
+| `users` | Partial | `passwd.users` — supports `name`, `passwd`, `gecos`, `homedir`, `shell`, and `ssh_authorized_keys` |
+| `bootcmd` | Unsupported | Generated scripts and systemd oneshot units |
+| `ntp` | Unsupported | Flatcar time-sync configuration/files and units |
+| `disk_setup` | Unsupported | Butane storage configuration where semantics can be preserved |
+| `fs_setup` | Unsupported | Butane `storage.filesystems` |
+| `mounts` | Unsupported | Butane filesystems and/or systemd mount units |
+
+Unsupported stanzas produce explicit path-aware errors rather than being silently discarded.
+
+
 ### A Flatcar Container Linux project
 
 Flatcar Container Linux is a fully open source, minimal-footprint, secure by default and always up-to-date Linux distribution for running containers at scale.
