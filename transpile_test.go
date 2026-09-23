@@ -23,6 +23,10 @@ func TestTranspileRejectsInvalidDocument(t *testing.T) {
 			input:   "# generated config\n#cloud-config\nusers: []\n",
 			wantErr: "missing #cloud-config header",
 		},
+		"blank line before header": {
+			input:   "\n#cloud-config\nusers: []\n",
+			wantErr: "missing #cloud-config header",
+		},
 		"jinja template": {
 			input:   "## template: jinja\n#cloud-config\nusers:\n  - name: alice\n    gecos: \"{{ ds.meta_data.name }}\"\n",
 			wantErr: "Jinja templates are unsupported",

@@ -96,19 +96,15 @@ func Transpile(input []byte) ([]byte, error) {
 }
 
 func validateCloudConfigHeader(input []byte) error {
-	for _, line := range strings.Split(string(input), "\n") {
-		line = strings.TrimSpace(line)
-		if line == "## template: jinja" {
-			return fmt.Errorf("Jinja templates are unsupported; render the template before transpiling")
-		}
-		if line == "#cloud-config" {
-			return nil
-		}
-		if line != "" {
-			return fmt.Errorf("missing #cloud-config header")
-		}
+	firstLine, _, _ := strings.Cut(string(input), "\n")
+	switch strings.TrimSpace(firstLine) {
+	case "## template: jinja":
+		return fmt.Errorf("Jinja templates are unsupported; render the template before transpiling")
+	case "#cloud-config":
+		return nil
+	default:
+		return fmt.Errorf("missing #cloud-config header")
 	}
-	return fmt.Errorf("missing #cloud-config header")
 }
 
 func rejectYAMLReferences(input []byte) error {
