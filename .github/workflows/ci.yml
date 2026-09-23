@@ -12,6 +12,8 @@ jobs:
   test:
     name: Build and test
     runs-on: ubuntu-latest
+    env:
+      GOFLAGS: -mod=vendor
     steps:
       - name: Check out repository
         # v7.0.1
@@ -23,9 +25,6 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
-
-      - name: Download dependencies
-        run: go mod download
 
       - name: Build
         run: go build ./...
