@@ -1,6 +1,6 @@
 module github.com/flatcar/Butane-init
 
-go 1.25.0
+go 1.27.0
 
 require (
 	github.com/coreos/ignition/v2 v2.27.0
