@@ -18,7 +18,7 @@ func TestCommandTranspilesStdinToStdout(t *testing.T) {
 		t.Fatalf("Execute() error = %v; stderr = %q", err, stderr.String())
 	}
 
-	want := "variant: flatcar\nversion: 1.0.0\n"
+	want := "variant: flatcar\nversion: 1.1.0\n"
 	if got := stdout.String(); got != want {
 		t.Fatalf("stdout mismatch\nwant:\n%s\ngot:\n%s", want, got)
 	}

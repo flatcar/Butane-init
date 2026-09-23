@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/flatcar/Butane-init/internal/transpile"
+	"github.com/flatcar/Butane-init"
 )
 
 func TestTranspileRejectsInvalidDocument(t *testing.T) {

@@ -4,14 +4,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/flatcar/Butane-init/internal/transpile"
+	"github.com/flatcar/Butane-init"
 )
 
 func TestTranspileClusterAPIWorkerUser(t *testing.T) {
 	input := readFixture(t, "cluster-api-supported-user.yaml")
 
 	want := `variant: flatcar
-version: 1.0.0
+version: 1.1.0
 passwd:
   users:
     - name: foo
