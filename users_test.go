@@ -10,16 +10,16 @@ import (
 func TestTranspileClusterAPIWorkerUser(t *testing.T) {
 	input := readFixture(t, "cluster-api-supported-user.yaml")
 
-	want := `variant: flatcar
-version: 1.1.0
+	want := `version: 1.1.0
+variant: flatcar
 passwd:
   users:
-    - name: foo
+    - gecos: Foo B. Bar
+      home_dir: /home/foo
+      name: foo
       password_hash: "!$6$REDACTED_TEST_HASH"
       ssh_authorized_keys:
         - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIREDACTED fixture@example
-      gecos: Foo B. Bar
-      home_dir: /home/foo
       shell: /bin/false
 `
 

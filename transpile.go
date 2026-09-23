@@ -8,6 +8,7 @@ import (
 
 	butane "github.com/coreos/ignition/v2/butane/config"
 	butanecommon "github.com/coreos/ignition/v2/butane/config/common"
+	schema "github.com/coreos/ignition/v2/butane/config/flatcar/v1_1"
 	"github.com/goccy/go-yaml"
 	"github.com/goccy/go-yaml/ast"
 	"github.com/goccy/go-yaml/lexer"
@@ -19,16 +20,6 @@ const (
 	variant = "flatcar"
 	version = "1.1.0"
 )
-
-type outputConfig struct {
-	Variant string        `yaml:"variant"`
-	Version string        `yaml:"version"`
-	Passwd  *outputPasswd `yaml:"passwd,omitempty"`
-}
-
-type outputPasswd struct {
-	Users []outputUser `yaml:"users"`
-}
 
 // ValidationProblem describes one invalid or unsupported cloud-config value.
 type ValidationProblem struct {
@@ -90,11 +81,11 @@ func Transpile(input []byte) ([]byte, error) {
 		return nil, problems
 	}
 
-	config := outputConfig{Variant: variant, Version: version}
+	config := schema.Config{Variant: variant, Version: version}
 	if len(users) > 0 {
-		config.Passwd = &outputPasswd{Users: users}
+		config.Passwd.Users = users
 	}
-	out, err := yaml.MarshalWithOptions(config, yaml.Indent(2), yaml.IndentSequence(true))
+	out, err := yaml.MarshalWithOptions(config, yaml.OmitZero(), yaml.Indent(2), yaml.IndentSequence(true))
 	if err != nil {
 		return nil, fmt.Errorf("encode Butane config: %w", err)
 	}

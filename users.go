@@ -4,19 +4,11 @@ import (
 	"fmt"
 	"strings"
 
+	base "github.com/coreos/ignition/v2/butane/base/v0_5"
 	"github.com/goccy/go-yaml/ast"
 )
 
-type outputUser struct {
-	Name              string   `yaml:"name"`
-	PasswordHash      *string  `yaml:"password_hash,omitempty"`
-	SSHAuthorizedKeys []string `yaml:"ssh_authorized_keys,omitempty"`
-	Gecos             *string  `yaml:"gecos,omitempty"`
-	HomeDir           *string  `yaml:"home_dir,omitempty"`
-	Shell             *string  `yaml:"shell,omitempty"`
-}
-
-func parseUsers(document map[string]any, file *ast.File) ([]outputUser, ValidationErrors) {
+func parseUsers(document map[string]any, file *ast.File) ([]base.PasswdUser, ValidationErrors) {
 	var problems ValidationErrors
 	rawUsers, exists := document["users"]
 	if !exists {
@@ -28,7 +20,7 @@ func parseUsers(document map[string]any, file *ast.File) ([]outputUser, Validati
 		return nil, problems
 	}
 
-	users := make([]outputUser, 0, len(items))
+	users := make([]base.PasswdUser, 0, len(items))
 	seenUsers := map[string]struct{}{}
 	for i, item := range items {
 		path := fmt.Sprintf("users[%d]", i)
@@ -52,7 +44,7 @@ func parseUsers(document map[string]any, file *ast.File) ([]outputUser, Validati
 	return users, problems
 }
 
-func parseUser(fields map[string]any, path string, file *ast.File) (outputUser, ValidationErrors) {
+func parseUser(fields map[string]any, path string, file *ast.File) (base.PasswdUser, ValidationErrors) {
 	allowed := map[string]bool{
 		"name": true, "passwd": true, "gecos": true, "homedir": true,
 		"shell": true, "ssh_authorized_keys": true,
@@ -64,7 +56,7 @@ func parseUser(fields map[string]any, path string, file *ast.File) (outputUser, 
 		}
 	}
 
-	var user outputUser
+	var user base.PasswdUser
 	user.Name = requiredString(fields, "name", path, file, &problems)
 	user.Gecos = optionalString(fields, "gecos", path, file, &problems)
 	user.HomeDir = optionalString(fields, "homedir", path, file, &problems)
@@ -105,7 +97,7 @@ func optionalString(fields map[string]any, key, path string, file *ast.File, pro
 	return &value
 }
 
-func sshKeys(fields map[string]any, path string, file *ast.File, problems *ValidationErrors) []string {
+func sshKeys(fields map[string]any, path string, file *ast.File, problems *ValidationErrors) []base.SSHAuthorizedKey {
 	raw, exists := fields["ssh_authorized_keys"]
 	if !exists {
 		return nil
@@ -120,7 +112,7 @@ func sshKeys(fields map[string]any, path string, file *ast.File, problems *Valid
 		return nil
 	}
 
-	keys := make([]string, 0, len(items))
+	keys := make([]base.SSHAuthorizedKey, 0, len(items))
 	seen := map[string]struct{}{}
 	for i, rawKey := range items {
 		keyPath := fmt.Sprintf("%s.ssh_authorized_keys[%d]", path, i)
@@ -134,7 +126,7 @@ func sshKeys(fields map[string]any, path string, file *ast.File, problems *Valid
 			continue
 		}
 		seen[key] = struct{}{}
-		keys = append(keys, key)
+		keys = append(keys, base.SSHAuthorizedKey(key))
 	}
 	return keys
 }

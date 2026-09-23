@@ -89,6 +89,19 @@ func TestTranspileReturnsStructuredValidationErrors(t *testing.T) {
 	}
 }
 
+func TestTranspileOmitsZeroValuedSchemaFields(t *testing.T) {
+	input := "#cloud-config\nusers:\n  - name: alice\n"
+	want := "version: 1.1.0\nvariant: flatcar\npasswd:\n  users:\n    - name: alice\n"
+
+	got, err := transpile.Transpile([]byte(input))
+	if err != nil {
+		t.Fatalf("Transpile() error = %v", err)
+	}
+	if string(got) != want {
+		t.Fatalf("Transpile() output mismatch\nwant:\n%s\ngot:\n%s", want, got)
+	}
+}
+
 func readFixture(t *testing.T, name string) string {
 	t.Helper()
 	contents, err := os.ReadFile("testcases/" + name)
