@@ -17,7 +17,7 @@ import (
 
 const (
 	variant = "flatcar"
-	version = "1.0.0"
+	version = "1.1.0"
 )
 
 type outputConfig struct {
