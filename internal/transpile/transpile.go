@@ -56,7 +56,7 @@ func (e ValidationErrors) Error() string {
 // Transpile converts one cloud-config document into a Flatcar Butane config.
 func Transpile(input []byte) ([]byte, error) {
 	if err := validateCloudConfigHeader(input); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("validating cloud config header: %w", err)
 	}
 
 	file, err := parser.ParseBytes(input, 0)
