@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/flatcar/Butane-init"
+	"github.com/flatcar/butane-init"
 	"github.com/spf13/cobra"
 )
 

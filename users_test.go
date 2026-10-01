@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/flatcar/Butane-init"
+	"github.com/flatcar/butane-init"
 )
 
 func TestTranspileClusterAPIWorkerUser(t *testing.T) {
