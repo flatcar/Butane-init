@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/flatcar/Butane-init"
+	"github.com/flatcar/butane-init"
 )
 
 func TestTranspileRejectsInvalidDocument(t *testing.T) {

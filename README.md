@@ -14,7 +14,7 @@
 
 
 
-# Butane-Init: a Cloud-Init to Butane Config Transpiler
+# butane-init: a Cloud-Init to Butane Config Transpiler
 
 ### Background
 

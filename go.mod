@@ -1,4 +1,4 @@
-module github.com/flatcar/Butane-init
+module github.com/flatcar/butane-init
 
 go 1.27.0
 
